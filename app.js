@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 
     if(req.query.name != null){
         Visitor.findOne({'name':req.query.name}, function(err, visitorUpdate) {
-            if(visitorUpdate){
+            if(visitorUpdate!=null){
                 visitorUpdate.count += 1;
                 visitorUpdate.save();
             }else{
@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
     else{
         var visitor = new Visitor({ name: 'Anónimo', count:1 });
         visitor.save({}, (err, visitor)=>{
-            if(visitor){
+            if(visitor!=null){
                 Visitor.find({},(err,visitors)=>{
                     var html=`<table>
                             <thead><tr>
