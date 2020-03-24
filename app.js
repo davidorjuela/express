@@ -14,14 +14,18 @@ var Visitor = mongoose.model("Visitor", schema);
 
 app.get('/', (req, res) => {
 
-    if(req.query.name != null){
+    if(req.query.name !== null){
         Visitor.findOne({'name':req.query.name}, function(err, visitorUpdate) {
             if(visitorUpdate!=null){
                 visitorUpdate.count += 1;
-                visitorUpdate.save();
+                visitorUpdate.save(function(err) {
+                    if (err) return console.error(err);
+                  });
             }else{
                 var visitor = new Visitor({ name: req.query.name, count:1 });
-                visitor.save();
+                visitor.save(function(err) {
+                    if (err) return console.error(err);
+                  });
             }
         });
     }
