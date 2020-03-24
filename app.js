@@ -14,7 +14,7 @@ var Visitor = mongoose.model("Visitor", schema);
 
 app.get('/', (req, res) => {
 
-    if(req.query.name){
+    if(req.query.name != null){
         Visitor.findOne({'name':req.query.name}, function(err, visitorUpdate) {
             if(visitorUpdate){
                 visitorUpdate.count += 1;
