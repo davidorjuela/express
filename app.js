@@ -28,33 +28,31 @@ app.get('/', (req, res) => {
                   });
             }
         });
-        res.send("");
     }
     else{
         var visitor = new Visitor({ name: 'Anónimo', count:1 });
-        visitor.save({}, (err, visitor)=>{
-            if(visitor){
-                Visitor.find({},(err,visitors)=>{
-                    var html=`<table>
-                            <thead><tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Visits</th>
-                            </tr></thead>`;
-                    visitors.forEach(visitor => {
-                        html+=`
-                        <tr>
-                            <td>${visitor._id}</td>
-                            <td>${visitor.name}</td>
-                            <td>${visitor.count}</td>
-                        </tr>`;
-                    });
-                    html+=`</body></table>`;
-                    res.send(html);
-                });
-            }
-        });
+        visitor.save(function(err) {
+            if (err) return console.error(err);
+          });
     }
+    Visitor.find({},(err,visitors)=>{
+        var html=`<table>
+                <thead><tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Visits</th>
+                </tr></thead>`;
+        visitors.forEach(visitor => {
+            html+=`
+            <tr>
+                <td>${visitor._id}</td>
+                <td>${visitor.name}</td>
+                <td>${visitor.count}</td>
+            </tr>`;
+        });
+        html+=`</body></table>`;
+        res.send(html);
+    });
 });
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
