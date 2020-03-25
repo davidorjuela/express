@@ -27,8 +27,23 @@ app.get('/', (req, res) => {
                     if (err) return console.error(err);
                   });
             }
+            var html=`<table>
+                            <thead><tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Visits</th>
+                            </tr></thead>`;
+                    visitors.forEach(visitor => {
+                        html+=`
+                        <tr>
+                            <td>${visitor._id}</td>
+                            <td>${visitor.name}</td>
+                            <td>${visitor.count}</td>
+                        </tr>`;
+                    });
+                    html+=`</body></table>`;
+                    res.send(html);
         });
-        res.send("Registro exitoso");
     }
     else{
         var visitor = new Visitor({ name: 'Anónimo', count:1 });
