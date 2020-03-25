@@ -28,6 +28,7 @@ app.get('/', (req, res) => {
                   });
             }
         });
+        res.send("Registro exitoso");
     }
     else{
         var visitor = new Visitor({ name: 'Anónimo', count:1 });
