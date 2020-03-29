@@ -20,11 +20,13 @@ app.get('/', (req, res) => {
                 visitorUpdate.count += 1;
                 visitorUpdate.save(function(err) {
                     if (err) return console.error(err);
+                    res.send(`<script>alert('Visitante actualizado');</script>`);
                   });
             }else{
                 var visitor = new Visitor({ name: req.query.name, count:1 });
                 visitor.save(function(err) {
                     if (err) return console.error(err);
+                    res.send(`<script>alert('Nuevo visitante registrado!');</script>`);
                   });
             }
         });
@@ -33,26 +35,26 @@ app.get('/', (req, res) => {
         var visitor = new Visitor({ name: 'Anónimo', count:1 });
         visitor.save(function(err) {
             if (err) return console.error(err);
+            Visitor.find({},(err,visitors)=>{
+                var html=`<table>
+                        <thead><tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Visits</th>
+                        </tr></thead>`;
+                visitors.forEach(visitor => {
+                    html+=`
+                    <tr>
+                        <td>${visitor._id}</td>
+                        <td>${visitor.name}</td>
+                        <td>${visitor.count}</td>
+                    </tr>`;
+                });
+                html+=`</body></table>`;
+                res.send(html);
+            });
           });
     }
-    Visitor.find({},(err,visitors)=>{
-        var html=`<table>
-                <thead><tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Visits</th>
-                </tr></thead>`;
-        visitors.forEach(visitor => {
-            html+=`
-            <tr>
-                <td>${visitor._id}</td>
-                <td>${visitor.name}</td>
-                <td>${visitor.count}</td>
-            </tr>`;
-        });
-        html+=`</body></table>`;
-        res.send(html);
-    });
 });
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
