@@ -18,42 +18,65 @@ app.get('/', (req, res) => {
         Visitor.findOne({'name':req.query.name}, function(err, visitorUpdate) {
             if(visitorUpdate){
                 visitorUpdate.count += 1;
-                visitorUpdate.save(function(err) {
-                    if (err) return console.error(err);
-                    res.send(`<script>alert('Visitante actualizado');</script>`);
-                  });
+                visitorUpdate.save((err, updatedUser)=> {
+                    if(err){
+                        res.status(500).send({ message: "Error en el servidor" });
+                    }
+                    else{
+                        if(!updatedUser){
+                            res.send(`<script>alert('No fue posible actualizar');</script>`);
+                        }
+                        else{
+                            res.send(`<script>alert('Visitante actualizado');</script>`);
+                        }
+                    }
+                });
             }else{
                 var visitor = new Visitor({ name: req.query.name, count:1 });
-                visitor.save(function(err) {
-                    if (err) return console.error(err);
-                    res.send(`<script>alert('Nuevo visitante registrado!');</script>`);
-                  });
+                visitor.save((err, newUser)=> {
+                    if(err){
+                        res.status(500).send({ message: "Error en el servidor" });
+                    }
+                    else{
+                        if(!newUser){
+                            res.send(`<script>alert('No fue posible registrar usuario');</script>`);
+                        }
+                        else{
+                            res.send(`<script>alert('${newUser.name} registrado!');</script>`);
+                        }
+                    }
+                });
             }
         });
     }
     else{
         var visitor = new Visitor({ name: 'Anónimo', count:1 });
-        visitor.save(function(err) {
-            if (err) return console.error(err);
-            Visitor.find({},(err,visitors)=>{
-                var html=`<table>
-                        <thead><tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Visits</th>
-                        </tr></thead>`;
-                visitors.forEach(visitor => {
-                    html+=`
-                    <tr>
-                        <td>${visitor._id}</td>
-                        <td>${visitor.name}</td>
-                        <td>${visitor.count}</td>
-                    </tr>`;
+        visitor.save((err, newUser)=> {
+            if(err){
+                res.status(500).send({ message: "Error en el servidor" });
+            }
+            else{
+                Visitor.find({},(err,visitors)=>{
+                    var html=`<table>
+                            <thead><tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Visits</th>
+                            </tr></thead>`;
+                    visitors.forEach(visitor => {
+                        html+=`
+                        <tr>
+                            <td>${visitor._id}</td>
+                            <td>${visitor.name}</td>
+                            <td>${visitor.count}</td>
+                        </tr>`;
+                    });
+                    html+=`</body></table>`;
+                    res.send(html);
                 });
-                html+=`</body></table>`;
-                res.send(html);
-            });
-          });
+            }
+            
+        });
     }
 });
 
